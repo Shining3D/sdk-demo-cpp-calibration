@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>546</width>
+    <height>563</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>290</y>
+      <width>531</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Asynchronous</string>
+    </property>
+    <widget class="QLabel" name="label_AsyBeginType">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>26</y>
+       <width>61</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Begin-type</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_AsyBeginProps">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>107</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Begin-props</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_AsyFinishType">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>14</y>
+       <width>71</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finish-type&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_AsyFinishProps">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>112</y>
+       <width>81</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Finish-props</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="label_AsyFinishPropsR">
+     <property name="geometry">
+      <rect>
+       <x>323</x>
+       <y>110</y>
+       <width>191</width>
+       <height>81</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="label_AsyBeginTypeR">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>16</y>
+       <width>171</width>
+       <height>81</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="label_AsyBeginPropsR">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>107</y>
+       <width>171</width>
+       <height>81</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="label_AsyFinishTypeR">
+     <property name="geometry">
+      <rect>
+       <x>324</x>
+       <y>17</y>
+       <width>191</width>
+       <height>81</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="pushButton_DeviceCheck">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Check device</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Heartbeat:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLCDNumber" name="lcdNumber">
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>1</number>
+       </property>
+       <property name="intValue" stdset="0">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>541</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>101</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QLabel" name="label_Cali5">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Cali4">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Cali3">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Cali2">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Cali1">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_CaliGroup">
+     <property name="geometry">
+      <rect>
+       <x>271</x>
+       <y>11</y>
+       <width>81</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>116</x>
+       <y>6</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+font: 14pt &quot;Arial&quot;;</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Current group:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_CaliTime">
+     <property name="geometry">
+      <rect>
+       <x>152</x>
+       <y>53</y>
+       <width>141</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>time</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>117</x>
+       <y>53</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Time:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_CaliDistance">
+     <property name="geometry">
+      <rect>
+       <x>222</x>
+       <y>68</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>distance</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>115</x>
+       <y>72</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Current distance:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_GetInformation">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>100</y>
+       <width>131</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Refresh information</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_CaliType">
+     <property name="geometry">
+      <rect>
+       <x>199</x>
+       <y>126</y>
+       <width>201</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 16pt &quot;Arial&quot;;
+color:rgb(255, 0, 0);
+</string>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>CT_STEREO</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CT_WHITE_BALANCE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CT_HD</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CT_DEFINITION</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QPushButton" name="pushButton_CaliSetType">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>130</y>
+       <width>81</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Set the type</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_CaliExit">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>160</y>
+       <width>111</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Exit calibration</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_enterCali">
+     <property name="geometry">
+      <rect>
+       <x>109</x>
+       <y>159</y>
+       <width>121</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Enter calibration</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_SetSnapEnabled">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>12</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 16pt &quot;Arial&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Start calibrating</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>546</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCalibration">
+    <property name="title">
+     <string>Calibration</string>
+    </property>
+   </widget>
+   <addaction name="menuCalibration"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
