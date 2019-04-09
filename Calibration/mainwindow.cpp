@@ -71,7 +71,9 @@ MainWindow::MainWindow(QWidget *parent) :
 		m_progressDialog->onFinishAsync();
 		QCoreApplication::processEvents();
 	});
+	//init
 	ui->widget->setEnabled(false);
+	ui->comboBox_CaliType->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -129,14 +131,7 @@ void MainWindow::CaliGetTime()
 	qDebug() << "recv reply data:" << dt.toString("HH:MM:ss yyyy-MM-dd");
 	assert(!hasMore(m_zmqReqSocket));
 }
-
-
-
-
-
-
-
-
+//
 void MainWindow::CaliCurrentGroup()
 {
 	const char *sendData = "v1.0/cali/currentCaliGroup";
@@ -149,7 +144,6 @@ void MainWindow::CaliCurrentGroup()
 	ui->label_CaliGroup->setText(QString::number(num));
 	assert(!hasMore(m_zmqReqSocket));
 }
-
 
 void MainWindow::CaliCurrentDist()
 {
@@ -197,6 +191,7 @@ void MainWindow::on_pushButton_CaliExit_clicked()
 	qDebug() << "cali exitCali:" << valBool;
 
 	assert(!hasMore(m_zmqReqSocket));
+	resetCaliStatus();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -210,17 +205,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	MainWindow::closeEvent(event);
 }
 
-bool MainWindow::typeBool(QString type)
-{
-	if (type=="true")
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
+
 
 void MainWindow::on_pushButton_SetSnapEnabled_clicked()
 {
@@ -276,7 +261,6 @@ void MainWindow::on_pushButton_CaliSetType_clicked()
 
 }
 
-
 void MainWindow::onHeartbeat()
 {
     m_heartbeatTimer->start();
@@ -317,6 +301,7 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 
 		ui->label_AsyFinishPropsR->setText(propsByte);
 		m_progressDialog->onFinishAsync();
+		resetCaliStatus();
 		qDebug() << "type" << type << "\n" << "props" << propsByte << endl;
 	}
 	else if (majorCmd == QStringLiteral("progress")) {
@@ -405,6 +390,15 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 			}
 		}	
 	}
+}
+
+void MainWindow::resetCaliStatus()
+{
+	ui->label_Cali1->setStyleSheet("background-color:red");
+	ui->label_Cali2->setStyleSheet("background-color:red");
+	ui->label_Cali3->setStyleSheet("background-color:red");
+	ui->label_Cali4->setStyleSheet("background-color:red");
+	ui->label_Cali5->setStyleSheet("background-color:red");
 }
 
 
