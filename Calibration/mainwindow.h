@@ -76,6 +76,8 @@ private slots:
 	*/
 	void onVideoImageReady(int camID, QPixmap pixmap);
 private:
+	void resetCaliStatus();
+
 public:
 	/*
 	socket:ZMQ socket
@@ -108,7 +110,7 @@ public slots:
 
 protected:
 	void closeEvent(QCloseEvent *event);//When the main thread  exit,it exits the sub-thread
-	bool typeBool(QString type);//Get boolean values corresponding to characters.
+	
 	
 };
 
