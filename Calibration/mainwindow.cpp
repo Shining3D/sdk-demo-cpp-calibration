@@ -15,6 +15,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     m_progressDialog = new ProgressDialog(this);
 
+	lineEdit_Group.resize(5);
+	lineEdit_Group[0] = ui->lineEdit_Group1;
+	lineEdit_Group[1] = ui->lineEdit_Group2;
+	lineEdit_Group[2] = ui->lineEdit_Group3;
+	lineEdit_Group[3] = ui->lineEdit_Group4;
+	lineEdit_Group[4] = ui->lineEdit_Group5;
+
+	widget_Step.resize(4);
+	widget_Step[0] = ui->widget_Step1;
+	widget_Step[1] = ui->widget_Step2;
+	widget_Step[2] = ui->widget_Step3;
+	widget_Step[3] = ui->widget_Step4;
+
+	ui->widget_Calibration5->hide();
+	ui->widget_Calibration7->hide();
+	ui->pushButton_GetInformation->setEnabled(false);
+
 	m_zmqContext = zmq_ctx_new();
 	auto err = zmq_strerror(zmq_errno());
 
@@ -108,7 +125,7 @@ void MainWindow::on_pushButton_DeviceCheck_clicked()
 {
 	const char *sendData = "v1.0/device/check";
 	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), 0);
-
+	m_progressDialog->setWindowTitle("Check Device");
 
 	int result = 0;
 	nbytes = zmq_recv(m_zmqReqSocket, &result, sizeof(int), 0);
@@ -120,15 +137,46 @@ void MainWindow::on_pushButton_DeviceCheck_clicked()
 	assert(!hasMore(m_zmqReqSocket));
 }
 
+void MainWindow::on_pushButton_pro_clicked()
+{
+	const char *sendData = "v1.0/device/devSubType/set";
+	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), ZMQ_SNDMORE);
+
+	QByteArray proType("DST_PRO");
+	nbytes = zmq_send(m_zmqReqSocket, proType, proType.size(), 0);
+
+	int result = 0;
+	nbytes = zmq_recv(m_zmqReqSocket, &result, sizeof(int), 0);
+	qDebug() << "recv reply data:" << (result == 0 ? false : true);
+	assert(!hasMore(m_zmqReqSocket));
+}
+
+void MainWindow::on_pushButton_pro_plus_clicked()
+{
+	const char *sendData = "v1.0/device/devSubType/set";
+	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), ZMQ_SNDMORE);
+
+	QByteArray proType("DST_PRO_PLUS");
+	nbytes = zmq_send(m_zmqReqSocket, proType, proType.size(), 0);
+
+	int result = 0;
+	nbytes = zmq_recv(m_zmqReqSocket, &result, sizeof(int), 0);
+	qDebug() << "recv reply data:" << (result == 0 ? false : true);
+	assert(!hasMore(m_zmqReqSocket));
+}
+
 void MainWindow::CaliGetTime()
 {
 	const char *sendData = "v1.0/cali/time";
 	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), 0);
-	qlonglong result = 0;
-	nbytes = zmq_recv(m_zmqReqSocket, &result, sizeof(int), 0);
-	auto dt = QDateTime::fromSecsSinceEpoch(result);
-	ui->label_CaliTime->setText(dt.toString("HH:MM:ss yyyy-MM-dd"));
-	qDebug() << "recv reply data:" << dt.toString("HH:MM:ss yyyy-MM-dd");
+
+	//qlonglong result = 0;
+	char buf[MAX_DATA_LENGTH + 1] = { 0 };
+	nbytes = zmq_recv(m_zmqReqSocket, buf, MAX_DATA_LENGTH, 0);
+
+	QString strDate(buf);
+	//auto dt = QDateTime::fromSecsSinceEpoch(result);
+	ui->label_CaliTime->setText(strDate);
 	assert(!hasMore(m_zmqReqSocket));
 }
 //
@@ -141,6 +189,7 @@ void MainWindow::CaliCurrentGroup()
 	int num;
 	memcpy(&num, buf, sizeof(int));
 	qDebug() << "cali currentCaliGroup:" << num;
+	//lineEdit_Group[num-1]->setStyleSheet("background-color:gray");
 	ui->label_CaliGroup->setText(QString::number(num));
 	assert(!hasMore(m_zmqReqSocket));
 }
@@ -167,6 +216,7 @@ void MainWindow::on_pushButton_GetInformation_clicked()
 
 void MainWindow::on_pushButton_enterCali_clicked()
 {
+	m_progressDialog->setWindowTitle("Enter calibration");
 	const char *sendData = "v1.0/cali/enter";
 	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), 0);
 	char buf[MAX_DATA_LENGTH + 1] = { 0 };
@@ -175,12 +225,14 @@ void MainWindow::on_pushButton_enterCali_clicked()
 	memcpy(&num, buf, sizeof(int));
 	auto valBool = num == 0 ? false : true;
 	qDebug() << "cali enterCali:" << valBool;
+	ui->pushButton_GetInformation->setEnabled(true);
 
 	assert(!hasMore(m_zmqReqSocket));
 }
 
 void MainWindow::on_pushButton_CaliExit_clicked()
 {
+	m_progressDialog->setWindowTitle("Exit calibration");
 	const char *sendData = "v1.0/cali/exit";
 	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), 0);
 	char buf[MAX_DATA_LENGTH + 1] = { 0 };
@@ -205,8 +257,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	MainWindow::closeEvent(event);
 }
 
-
-
 void MainWindow::on_pushButton_SetSnapEnabled_clicked()
 {
 	char set;
@@ -229,15 +279,115 @@ void MainWindow::on_pushButton_SetSnapEnabled_clicked()
 	nbytes = zmq_recv(m_zmqReqSocket, &result, sizeof(int), 0);
 	bool setResult = (result == 0 ? false : true);
 	qDebug() << "pushButton_SetSnapEnabled recv reply data:" << (bool)setResult;
-	assert(!hasMore(m_zmqReqSocket));
-	
+	assert(!hasMore(m_zmqReqSocket));	
 }
 
+//void MainWindow::on_pushButton_CaliSetType_clicked()
+//{
+//	QString set = ui->comboBox_CaliType->currentText();
+//	
+//	char buf[MAX_DATA_LENGTH + 1] = { "v1.0/cali/type/set" };
+//	const char *sendData = buf;
+//	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), ZMQ_SNDMORE);
+//	char buf2[MAX_DATA_LENGTH + 1] = { 0 };
+//	for (int i = 0; i < set.size(); i++)
+//	{
+//		buf2[i] = set.at(i).toLatin1();
+//	}
+//	const char *sendData2 = buf2;
+//	nbytes = zmq_send(m_zmqReqSocket, sendData2, strlen(sendData2), 0);
+//	if (nbytes <= 0) {
+//		qWarning() << "cannot send CaliSetType!";
+//		return;
+//	}
+//
+//	int result = 0;
+//	nbytes = zmq_recv(m_zmqReqSocket, &result, sizeof(int), 0);
+//	bool setResult = (result == 0 ? false : true);
+//	qDebug() << "CaliSetType recv reply data:" << (bool)setResult;
+//	assert(!hasMore(m_zmqReqSocket));
+//
+//}
 
-void MainWindow::on_pushButton_CaliSetType_clicked()
+
+void MainWindow::nextStep(int num)
+{
+	ui->tabWidget->setCurrentIndex(num + 1);
+	for (int i = 0; i < ui->tabWidget->count(); i++)
+	{
+		if (i != num + 1)
+		{
+			widget_Step[i]->setEnabled(false);
+		}
+		else
+		{
+			widget_Step[i]->setEnabled(true);
+		}
+	}
+
+	if (ui->widget_Step1->isEnabled())
+	{
+		ui->label_DeviceStatus->setText("Status");
+	}
+	else if (ui->widget_Step2->isEnabled())
+	{
+		ui->label_EnterStatus->setText("Status");
+	}
+	else if (ui->widget_Step4->isEnabled())
+	{
+		lineEdit_Group[0]->setStyleSheet("background-color:white");
+		lineEdit_Group[1]->setStyleSheet("background-color:white");
+		lineEdit_Group[2]->setStyleSheet("background-color:white");
+		lineEdit_Group[3]->setStyleSheet("background-color:white");
+		lineEdit_Group[4]->setStyleSheet("background-color:white");
+	}
+}
+
+void MainWindow::backStep(int num)
+{
+	ui->tabWidget->setCurrentIndex(num - 1);
+	for (int i = 0; i < ui->tabWidget->count(); i++)
+	{
+		if (i != num - 1)
+		{
+			widget_Step[i]->setEnabled(false);
+		}
+		else
+		{
+			widget_Step[i]->setEnabled(true);
+		}
+	}
+
+	if (ui->widget_Step1->isEnabled())
+	{
+		ui->label_DeviceStatus->setText("Status");
+	}
+	else if (ui->widget_Step2->isEnabled())
+	{
+		ui->label_EnterStatus->setText("Status");
+	}
+
+}
+
+void MainWindow::on_pushButton_Step1Next_clicked()
+{
+	int index_tab = 0;
+	nextStep(index_tab);
+}
+void MainWindow::on_pushButton_Step2Next_clicked()
+{
+	int index_tab = 1;
+	nextStep(index_tab);
+}
+void MainWindow::on_pushButton_Step2Back_clicked()
+{
+	int index_tab = 1;
+	backStep(index_tab);
+}
+void MainWindow::on_pushButton_Step3Next_clicked()
 {
 	QString set = ui->comboBox_CaliType->currentText();
-	
+
 	char buf[MAX_DATA_LENGTH + 1] = { "v1.0/cali/type/set" };
 	const char *sendData = buf;
 	int nbytes = zmq_send(m_zmqReqSocket, sendData, strlen(sendData), ZMQ_SNDMORE);
@@ -259,7 +409,41 @@ void MainWindow::on_pushButton_CaliSetType_clicked()
 	qDebug() << "CaliSetType recv reply data:" << (bool)setResult;
 	assert(!hasMore(m_zmqReqSocket));
 
+	if (ui->comboBox_CaliType->currentIndex() == 0)
+	{
+		ui->widget->show();
+		ui->widget_Calibration5->setGeometry(90, 40, 191, 96);
+	}
+	else
+	{
+		ui->widget->hide();
+		ui->widget_Calibration5->setGeometry(90, 20, 191, 96);
+		ui->widget_Calibration7->setGeometry(100, 20, 174, 120);
+	}
+	if (ui->comboBox_CaliType->currentIndex() == 1 || ui->comboBox_CaliType->currentIndex() == 2)
+	{
+		ui->widget_Calibration5->hide();
+		ui->widget_Calibration7->show();
+	}
+	else if (ui->comboBox_CaliType->currentIndex() == 0 || ui->comboBox_CaliType->currentIndex() == 3)
+	{
+		ui->widget_Calibration5->show();
+		ui->widget_Calibration7->hide();
+	}
+	int index_tab = 2;
+	nextStep(index_tab);
 }
+void MainWindow::on_pushButton_Step3Back_clicked()
+{
+	int index_tab = 2;
+	backStep(index_tab);
+}
+void MainWindow::on_pushButton_Step4Back_clicked()
+{
+	int index_tab = 3;
+	backStep(index_tab);
+}
+
 
 void MainWindow::onHeartbeat()
 {
@@ -269,6 +453,9 @@ void MainWindow::onHeartbeat()
 
 void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArray data)
 {
+	CaliCurrentDist();
+	CaliCurrentGroup();
+	CaliGetTime();
 	if (majorCmd == QStringLiteral("beginAsyncAction")) {
 		auto jsonObj = jsonObject(data);
 		qDebug() << "beginAsyncAction json object:" << jsonObj;
@@ -286,6 +473,7 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 	}
 	else if (majorCmd == QStringLiteral("finishAsyncAction")) {
 		auto jsonObj = jsonObject(data);
+		m_progressDialog->setWindowTitle("Data processing");
 		qDebug() << "finishAsyncAction json object:" << jsonObj;
 		auto type = jsonObj["type"].toString();
 		auto props = jsonObj["props"].toObject();
@@ -300,6 +488,19 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 		QByteArray propsByte = document.toJson();
 
 		ui->label_AsyFinishPropsR->setText(propsByte);
+
+		if (ui->widget_Step1->isEnabled())
+		{
+			ui->label_DeviceStatus->setText("Check Successful");
+			ui->pushButton_Step1Next->setEnabled(true);
+		}
+		else if (ui->widget_Step2->isEnabled())
+		{
+			ui->label_EnterStatus->setText("Enter Successful");
+			ui->pushButton_Step2Back->setEnabled(true);
+			ui->pushButton_Step2Next->setEnabled(true);
+		}
+
 		m_progressDialog->onFinishAsync();
 		resetCaliStatus();
 		qDebug() << "type" << type << "\n" << "props" << propsByte << endl;
@@ -309,14 +510,40 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 		memcpy(&value, data.constData(), data.size());
 		m_progressDialog->onProgress(value);
 	}
+	else if (majorCmd == QStringLiteral("device")){
+		if (minorCmd == QStringLiteral("event")){
+			qDebug() << "device/event";
+			QString deviceEvent = data;
+			//memcpy(&deviceEvent, data.constData(), data.size());
+			if (deviceEvent == "DE_DOUBLECLICK")
+			{
+				qDebug() << "DE_DOUBLECLICK";
+			}
+			else if (deviceEvent == "DE_CLICK")
+			{
+				on_pushButton_SetSnapEnabled_clicked();
+				qDebug() << "DE_CLICK";
+			}
+			else if (deviceEvent == "DE_PLUS")
+			{
+				qDebug() << "DE_PLUS";
+			}
+			else if (deviceEvent == "DE_SUB")
+			{
+				qDebug() << "DE_SUB";
+			}
+		}
+	}
 	else if (majorCmd == QStringLiteral("cali")) {
 		if (minorCmd == QStringLiteral("time")) {
-			qDebug() << data << "size:"<<data.size()<< endl;
-			qint64 valLL = 0;
-			memcpy(&valLL, data.constData(), data.size());
-			auto dt = QDateTime::fromSecsSinceEpoch(valLL);
-			ui->label_CaliTime->setText(dt.toString("HH:MM:ss yyyy-MM-dd"));
-			qDebug() << "onPublishReceived  cali//time:" << endl;
+			// 			qDebug() << data << "size:"<<data.size()<< endl;
+			// 			qint64 valLL = 0;
+			// 			memcpy(&valLL, data.constData(), data.size());
+			// 			auto dt = QDateTime::fromSecsSinceEpoch(valLL);
+			// 			ui->label_CaliTime->setText(dt.toString("HH:MM:ss yyyy-MM-dd"));
+
+			ui->label_CaliTime->setText(QString(data));
+			qDebug() << "onPublishReceived  cali//time: " << data;
 		}
 		//2019.3.21 cali-type
 		if (minorCmd == QStringLiteral("type"))
@@ -332,6 +559,15 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 		if (minorCmd == QStringLiteral("currentCaliGroup")) {
 			int  value = 0;
 			memcpy(&value, data.constData(), data.size());
+			lineEdit_Group[value-1]->setStyleSheet("background-color:gray");
+			if (value>1)
+			{
+				lineEdit_Group[value - 2]->setStyleSheet("background-color:white");
+			}
+			else if (value == 1)
+			{
+				lineEdit_Group[4]->setStyleSheet("background-color:white");
+			}
 			ui->label_CaliGroup->setText(QString::number(value));
 		}
 		if (minorCmd == QStringLiteral("currentCaliDist")) {
@@ -345,12 +581,13 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 			QJsonDocument jsondocument = QJsonDocument::fromJson(data);
 			QJsonObject jsonObject = jsondocument.object();
 			QJsonArray array = jsonObject["states"].toArray();
-			if (array.count() != 5) {
+			if (array.count() != 5&&array.count() != 7) 
+			{
 				qDebug() << "qjsonarray_Count:" << array.count();
 			}
-			else
+			else if (array.count() == 5 )
 			{
-				//qDebug() << "qjsonarray_Count:" << array.count();
+				qDebug() << "qjsonarray_Count:" << array.count();
 				bool cali1 = array[0].toBool();
 				bool cali2 = array[1].toBool();
 				bool cali3 = array[2].toBool();
@@ -360,32 +597,85 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 					ui->label_Cali1->setStyleSheet("background-color:green");
 				}
 				else {
-					ui->label_Cali1->setStyleSheet("background-color:red");
+					ui->label_Cali1->setStyleSheet("background-color:gray");
 				}
 				if (cali2 == true) {
 					ui->label_Cali2->setStyleSheet("background-color:green");
 				}
 				else {
-					ui->label_Cali2->setStyleSheet("background-color:red");
+					ui->label_Cali2->setStyleSheet("background-color:gray");
 				}
 				if (cali3 == true) {
 					ui->label_Cali3->setStyleSheet("background-color:green");
 				}
 				else {
-					ui->label_Cali3->setStyleSheet("background-color:red");
+					ui->label_Cali3->setStyleSheet("background-color:gray");
 				}
 				if (cali4 == true) {
 					ui->label_Cali4->setStyleSheet("background-color:green");
 				}
 				else {
-					ui->label_Cali4->setStyleSheet("background-color:red");
+					ui->label_Cali4->setStyleSheet("background-color:gray");
 				}
 
 				if (cali5 == true) {
 					ui->label_Cali5->setStyleSheet("background-color:green");
 				}
 				else {
-					ui->label_Cali5->setStyleSheet("background-color:red");
+					ui->label_Cali5->setStyleSheet("background-color:gray");
+				}
+			}
+			else if (array.count() == 7)
+			{
+				qDebug() << "qjsonarray_Count:" << array.count();
+				bool cali1 = array[0].toBool();
+				bool cali2 = array[1].toBool();
+				bool cali3 = array[2].toBool();
+				bool cali4 = array[3].toBool();
+				bool cali5 = array[4].toBool();
+				bool cali6 = array[5].toBool();
+				bool cali7 = array[6].toBool();
+				if (cali1 == true) {
+					ui->label_7Cali1->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali1->setStyleSheet("background-color:gray");
+				}
+				if (cali2 == true) {
+					ui->label_7Cali2->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali2->setStyleSheet("background-color:gray");
+				}
+				if (cali3 == true) {
+					ui->label_7Cali3->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali3->setStyleSheet("background-color:gray");
+				}
+				if (cali4 == true) {
+					ui->label_7Cali4->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali4->setStyleSheet("background-color:gray");
+				}
+				if (cali5 == true) {
+					ui->label_7Cali5->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali5->setStyleSheet("background-color:gray");
+				}
+				if (cali6 == true) {
+					ui->label_7Cali6->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali6->setStyleSheet("background-color:gray");
+				}
+				if (cali7 == true) {
+					ui->label_7Cali7->setStyleSheet("background-color:green");
+				}
+				else {
+					ui->label_7Cali7->setStyleSheet("background-color:gray");
 				}
 			}
 		}	
@@ -394,13 +684,25 @@ void MainWindow::onPublishReceived(QString majorCmd, QString minorCmd, QByteArra
 
 void MainWindow::resetCaliStatus()
 {
-	ui->label_Cali1->setStyleSheet("background-color:red");
-	ui->label_Cali2->setStyleSheet("background-color:red");
-	ui->label_Cali3->setStyleSheet("background-color:red");
-	ui->label_Cali4->setStyleSheet("background-color:red");
-	ui->label_Cali5->setStyleSheet("background-color:red");
+	if (ui->widget_Calibration5->isVisible())
+	{
+		ui->label_Cali1->setStyleSheet("background-color:gray");
+		ui->label_Cali2->setStyleSheet("background-color:gray");
+		ui->label_Cali3->setStyleSheet("background-color:gray");
+		ui->label_Cali4->setStyleSheet("background-color:gray");
+		ui->label_Cali5->setStyleSheet("background-color:gray");
+	}
+	else if (ui->widget_Calibration7->isVisible())
+	{
+		ui->label_7Cali1->setStyleSheet("background-color:gray");
+		ui->label_7Cali2->setStyleSheet("background-color:gray");
+		ui->label_7Cali3->setStyleSheet("background-color:gray");
+		ui->label_7Cali4->setStyleSheet("background-color:gray");
+		ui->label_7Cali5->setStyleSheet("background-color:gray");
+		ui->label_7Cali6->setStyleSheet("background-color:gray");
+		ui->label_7Cali7->setStyleSheet("background-color:gray");
+	}
 }
-
 
 void MainWindow::onVideoImageReady(int camID, QPixmap pixmap)
 {

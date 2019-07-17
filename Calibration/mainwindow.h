@@ -10,6 +10,7 @@
 #include <QJsonArray>
 #include <QThread>
 #include <QPixmap>
+#include <QVector>
 #include "progressdialog.h"
 #include "subscriber.h"
 #include "dataprocesser.h"
@@ -48,6 +49,9 @@ private slots:
 //There are some SDK test function ,  refer to SDK Document
 	void on_pushButton_DeviceCheck_clicked();// The button on the interface press to trigger,refer to SDK Doc
 	
+	void on_pushButton_pro_clicked();
+	void on_pushButton_pro_plus_clicked();
+
 	//Get cali information 
 	void CaliGetTime();
 	void CaliCurrentGroup();
@@ -58,7 +62,7 @@ private slots:
 
 	//set some cali status
 	void on_pushButton_SetSnapEnabled_clicked();
-	void on_pushButton_CaliSetType_clicked();
+	//void on_pushButton_CaliSetType_clicked();
 
 
     void onHeartbeat();//When the heartbeat stops,count to zero and start reporting errors
@@ -75,8 +79,21 @@ private slots:
 	This function to show video
 	*/
 	void onVideoImageReady(int camID, QPixmap pixmap);
+
+	void on_pushButton_Step1Next_clicked();
+	void on_pushButton_Step2Next_clicked();
+	void on_pushButton_Step2Back_clicked();
+	void on_pushButton_Step3Next_clicked();
+	void on_pushButton_Step3Back_clicked();
+	void on_pushButton_Step4Back_clicked();
+
 private:
 	void resetCaliStatus();
+	QVector<QWidget*> lineEdit_Group;
+	QVector<QWidget*> widget_Step;
+
+	void nextStep(int num);
+	void backStep(int num);
 
 public:
 	/*
